@@ -39,6 +39,18 @@ error occurs five times in a row , the state does not change to Open because the
 The success or failure of the process is determined by the exception.
 By default, any exception will be considered a failure if an exception is thrown, but you can also specify conditions for failure.
 
+##  Implementation
+There are two ways: using Spring AOP and writing in Functional.
+Regardless of the implementation, when Circuit is in the Open state, **CircuitBreakerOpenException** will occur.
+
+The example implementation is not a microservice for simplicity.
+Originally, it would **RestTemplate** be a process where the Service class uses other services to call APIs of other services.
+
+## Spring AOP
+**@CircuitBreaker(name = "hogehoge")** CircuitBreaker is enabled by specifying to the class or method .
+If specified in the class, CircuitBreaker will be enabled in all public methods.
+nameThe application.yml specifies the name of the CircuitBreaker was in set.
+
 ##  Fallback processing
 As with CircuitBreaker, there is no mechanism to execute fallback processing automatically, so you need to implement it yourself.
 It is OK if you process it with your favorite method, such as a method using Vavr's try monad or an ordinary try-catch.
