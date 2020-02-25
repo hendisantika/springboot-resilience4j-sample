@@ -36,4 +36,10 @@ public class CircuitBreakerController {
                 .recover(CircuitBreakerOpenException.class, "Circuit is Open!!")
                 .recover(RuntimeException.class, "fallback!!").get();
     }
+
+    @GetMapping("/aop")
+    public String aop(@RequestParam(required = false) String str) {
+        return Try.ofSupplier(() -> service.aop(str)).recover(CircuitBreakerOpenException.class, "Circuit is Open!!")
+                .recover(RuntimeException.class, "fallback!!").get();
+    }
 }
