@@ -29,11 +29,15 @@ public class RateLimiterController {
         this.service = service;
     }
 
-
     @GetMapping("func")
     public String func() {
         return Try.ofSupplier(RateLimiter.decorateSupplier(rateLimiter, service::func))
                 .recover(RequestNotPermitted.class, "Request Not Permitted!!").get();
+    }
+
+    @GetMapping("aop")
+    public String aop() {
+        return Try.of(service::aop).recover(RequestNotPermitted.class, "Request Not Permitted!!").get();
     }
 
 }
