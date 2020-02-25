@@ -2,6 +2,9 @@ package com.hendisantika.springbootresilience4jsample.ratelimiter;
 
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import io.vavr.control.Try;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,4 +28,12 @@ public class RateLimiterController {
         this.rateLimiter = registry.rateLimiter("limiterA");
         this.service = service;
     }
+
+
+    @GetMapping("func")
+    public String func() {
+        return Try.ofSupplier(RateLimiter.decorateSupplier(rateLimiter, service::func))
+                .recover(RequestNotPermitted.class, "Request Not Permitted!!").get();
+    }
+
 }
