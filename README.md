@@ -19,6 +19,26 @@ Also, only CircuitBreaker and RateLimiter are included in the above. If you want
 
 This time, I will summarize how to use CircuitBreaker and RateLimiter in Spring Boot 2.x series.
 
+##  CircuitBreaker
+When some services fail in a microservice, you can temporarily block access to the failed service to prevent its propagation.
+
+CircuitBreaker has three states: Closed, Open, and HalfOpen.
+It is Closed at normal time, and if the processing fails more than a certain amount, it becomes Open and blocks access.
+After a certain period of time in the Open state, the state changes to the HalfOpen state.
+If processing does not fail more than a certain amount in the HalfOpen state, the flow returns to the Closed state.
+
+Resilience4j manages the success and failure of processing in the ring buffer, and the state changes when the number of failures in the buffer exceeds the set ratio.
+It looks like the figure below shows that failure is held as 0 and success is held as 1.
+
+The ring buffer used in the judgment of Closed-> Open and HalfOpen-> Closed is different, and the size can be defined respectively, but the same value is used for the judgment condition (error rate).
+
+State transition does not take place until the ring buffer is full.
+For example, if the state of the ring buffer changes to 10 or 50% or more, even if an
+error occurs five times in a row , the state does not change to Open because the ring buffer is not full.
+
+The success or failure of the process is determined by the exception.
+By default, any exception will be considered a failure if an exception is thrown, but you can also specify conditions for failure.
+
 ##  Fallback processing
 As with CircuitBreaker, there is no mechanism to execute fallback processing automatically, so you need to implement it yourself.
 It is OK if you process it with your favorite method, such as a method using Vavr's try monad or an ordinary try-catch.
